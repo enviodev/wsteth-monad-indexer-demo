@@ -1,6 +1,8 @@
-import { ERC20, type Account, type Approval } from "generated";
+import { indexer, type Account, type Approval } from "envio";
 
-ERC20.Approval.handler(async ({ event, context }) => {
+indexer.onEvent(
+  { contract: "ERC20", event: "Approval" },
+  async ({ event, context }) => {
   //  getting the owner Account entity
   let ownerAccount = await context.Account.get(event.params.owner.toString());
 
@@ -27,9 +29,12 @@ ERC20.Approval.handler(async ({ event, context }) => {
 
   // this is the same for create or update as the amount is overwritten
   context.Approval.set(approvalObject);
-});
+}
+);
 
-ERC20.Transfer.handler(async ({ event, context }) => {
+indexer.onEvent(
+  { contract: "ERC20", event: "Transfer" },
+  async ({ event, context }) => {
   let senderAccount = await context.Account.get(event.params.from.toString());
 
   if (senderAccount === undefined) {
@@ -68,4 +73,5 @@ ERC20.Transfer.handler(async ({ event, context }) => {
 
     context.Account.set(accountObject);
   }
-});
+}
+);
